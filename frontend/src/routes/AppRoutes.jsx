@@ -1,6 +1,7 @@
 import React, { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-
+import ProtectedRoute from "../components/common/ProtectedRoute";
+import RoleRoute from "../components/common/RoleRoute";
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const JobDetails = lazy(() => import("../pages/JobDetails"));
@@ -22,10 +23,23 @@ const AppRoutes = () => {
 
       <Route path="/register" element={<Register />} />
 
-      <Route path="/student/dashboard" element={<StudentDashboard />} />
+      <Route
+        path="/student/dashboard"
+        element={
+          <RoleRoute role="student">
+            <StudentDashboard />
+          </RoleRoute>
+        }
+      />
 
-      <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
-
+      <Route
+        path="/recruiter/dashboard"
+        element={
+          <RoleRoute role="recruiter">
+            <RecruiterDashboard />
+          </RoleRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

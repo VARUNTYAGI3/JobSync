@@ -10,7 +10,7 @@ import {
   HeartIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
-
+import useAuth from "../../hooks/useAuth";
 import { formatPostedDate } from "../../utils/formatPostedDate";
 import { formatSalary } from "../../utils/formatSalary";
 
@@ -29,13 +29,14 @@ function JobCard({
   deleteJob,
   editJob,
 }) {
-  const initials = company
-    ?.split(" ")
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase() || "J";
-
+  const initials =
+    company
+      ?.split(" ")
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase() || "J";
+  const { user } = useAuth();
   const skillList = Array.isArray(skills) ? skills : [skills].filter(Boolean);
 
   return (
@@ -47,7 +48,9 @@ function JobCard({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+              <h2 className="text-base font-semibold text-slate-900">
+                {title}
+              </h2>
               {verified && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
                   <CheckBadgeIcon className="h-3.5 w-3.5" />
@@ -111,38 +114,42 @@ function JobCard({
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-2">
-        <button className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition duration-300 hover:bg-blue-700">
-          Apply
-          <ArrowRightIcon className="h-4 w-4" />
-        </button>
+      <div className="flex flex-wrap gap-3 mt-5">
+        {user?.role === "student" && (
+          <>
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+              Apply
+            </button>
 
-        <button
-          onClick={() =>
-            editJob({
-              id,
-              title,
-              company,
-              location,
-              salary,
-            })
-          }
-          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition duration-300 hover:border-blue-200 hover:text-blue-600"
-        >
-          Edit
-        </button>
+            <button className="border px-4 py-2 rounded-lg">Save</button>
+          </>
+        )}
 
-        <button
-          onClick={() => deleteJob(id)}
-          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition duration-300 hover:border-red-200 hover:text-red-600"
-        >
-          Delete
-        </button>
+        {user?.role === "recruiter" && (
+          <>
+            <button
+              onClick={() =>
+                editJob({
+                  id,
+                  title,
+                  company,
+                  location,
+                  salary,
+                })
+              }
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
+            >
+              Edit
+            </button>
 
-        <button className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition duration-300 hover:bg-purple-700">
-          <SparklesIcon className="h-4 w-4" />
-          Career Copilot
-        </button>
+            <button
+              onClick={() => deleteJob(id)}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+            >
+              Delete
+            </button>
+          </>
+        )}
       </div>
     </article>
   );

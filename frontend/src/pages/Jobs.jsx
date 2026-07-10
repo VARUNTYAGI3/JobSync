@@ -12,6 +12,7 @@ import {
 } from "../services/jobService";
 import { useMemo } from "react";
 import { useCallback } from "react";
+import useAuth from "../hooks/useAuth";
 const Jobs = () => {
   const [search, setSearch] = useState("");
   const [title, setTitle] = useState("");
@@ -25,6 +26,7 @@ const Jobs = () => {
   const [type, setType] = useState("Full-Time");
   const [skills, setSkills] = useState("");
   const [description, setDescription] = useState("");
+  const { user } = useAuth();
   const filteredJobs = useMemo(() => {
     console.log("Filtering Jobs...");
 
@@ -109,45 +111,32 @@ const Jobs = () => {
   }
 
   if (error) {
-    return <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-16"><div className="rounded-3xl border border-red-100 bg-white p-8 text-center shadow-sm"><h2 className="text-xl font-semibold text-slate-900">We could not load the jobs</h2><p className="mt-2 text-sm text-slate-600">{error}</p></div></div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-16">
+        <div className="rounded-3xl border border-red-100 bg-white p-8 text-center shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">
+            We could not load the jobs
+          </h2>
+          <p className="mt-2 text-sm text-slate-600">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-6 lg:self-start">
-            <AddJobForm
-              title={title}
-              setTitle={setTitle}
-              company={company}
-              setCompany={setCompany}
-              location={location}
-              setLocation={setLocation}
-              salary={salary}
-              setSalary={setSalary}
-              saveJob={saveJob}
-              editingId={editingId}
-              cancelEdit={cancelEdit}
-              workMode={workMode}
-              setWorkMode={setWorkMode}
-              experience={experience}
-              setExperience={setExperience}
-              type={type}
-              setType={setType}
-              skills={skills}
-              setSkills={setSkills}
-              description={description}
-              setDescription={setDescription}
-            />
-          </aside>
-
+  
           <main className="rounded-[32px] border border-slate-200 bg-white p-4 shadow-[0_20px_60px_-25px_rgba(15,23,42,0.16)] sm:p-6">
             <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
               <div>
-                <p className="text-sm font-medium text-blue-600">Discover fresh roles</p>
+                <p className="text-sm font-medium text-blue-600">
+                  Discover fresh roles
+                </p>
                 <h2 className="text-xl font-semibold text-slate-900">
-                  {filteredJobs.length} opportunity{filteredJobs.length === 1 ? "" : "s"} ready to explore
+                  {filteredJobs.length} opportunity
+                  {filteredJobs.length === 1 ? "" : "s"} ready to explore
                 </h2>
               </div>
               <div className="rounded-full bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm">
@@ -163,7 +152,11 @@ const Jobs = () => {
               />
             </div>
 
-            <JobList jobs={filteredJobs} deleteJob={deleteJob} editJob={editJob} />
+            <JobList
+              jobs={filteredJobs}
+              deleteJob={deleteJob}
+              editJob={editJob}
+            />
           </main>
         </div>
       </div>
