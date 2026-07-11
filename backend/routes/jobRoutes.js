@@ -7,9 +7,11 @@ const {
   createJob,
   updateJob,
   deleteJob,
+  getRecruiterJobs,
 } = require("../controllers/jobController");
+router.get("/",protect, getJobs);
 
-router.get("/", getJobs);
+router.get("/my-jobs", protect, getRecruiterJobs);
 
 router.get("/:id", getJobById);
 

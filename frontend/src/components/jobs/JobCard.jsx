@@ -5,15 +5,15 @@ import {
   CurrencyDollarIcon,
   BriefcaseIcon,
   ClockIcon,
-  SparklesIcon,
   CheckBadgeIcon,
   HeartIcon,
-  ArrowRightIcon,
 } from "@heroicons/react/24/outline";
 import useAuth from "../../hooks/useAuth";
 import { formatPostedDate } from "../../utils/formatPostedDate";
 import { formatSalary } from "../../utils/formatSalary";
-
+import { applyJob } from "../../services/applicationService";
+import { saveJob } from "../../services/savedJobService";
+import { useState } from "react";
 function JobCard({
   id,
   title,
@@ -28,6 +28,7 @@ function JobCard({
   verified,
   deleteJob,
   editJob,
+  applicationStatus,
 }) {
   const initials =
     company
@@ -37,13 +38,37 @@ function JobCard({
       .join("")
       .toUpperCase() || "J";
   const { user } = useAuth();
+  const [applied, setApplied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const skillList = Array.isArray(skills) ? skills : [skills].filter(Boolean);
+  async function handleApply() {
+    try {
+      await applyJob(id);
 
+      setApplied(true);
+
+      alert("Application submitted successfully!");
+    } catch (error) {
+      alert(error.response?.data?.message || "Application failed");
+    }
+  }
+
+  async function handleSave() {
+    try {
+      await saveJob(id);
+
+      setSaved(true);
+
+      alert("Job saved successfully!");
+    } catch (error) {
+      alert(error.response?.data?.message || "Unable to save job.");
+    }
+  }
   return (
-    <article className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_20px_60px_-25px_rgba(15,23,42,0.16)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_-20px_rgba(37,99,235,0.25)]">
+    <article className="group h-full rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_-20px_rgba(37,99,235,0.24)]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-sm font-semibold text-white">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-sm font-semibold text-white shadow-lg shadow-blue-600/20">
             {initials}
           </div>
           <div>
@@ -114,14 +139,37 @@ function JobCard({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mt-5">
+      <div className="mt-5 flex flex-wrap gap-3">
         {user?.role === "student" && (
           <>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-              Apply
-            </button>
+            {applicationStatus ? (
+              <button
+                disabled
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                  applicationStatus === "Accepted"
+                    ? "bg-green-100 text-green-700"
+                    : applicationStatus === "Rejected"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700"
+                }`}
+              >
+                {applicationStatus}
+              </button>
+            ) : (
+              <button
+                onClick={handleApply}
+                className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                Apply
+              </button>
+            )}
 
-            <button className="border px-4 py-2 rounded-lg">Save</button>
+            <button
+              onClick={handleSave}
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-blue-200 hover:text-blue-600"
+            >
+              Save
+            </button>
           </>
         )}
 
@@ -137,14 +185,14 @@ function JobCard({
                   salary,
                 })
               }
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
+              className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600"
             >
               Edit
             </button>
 
             <button
               onClick={() => deleteJob(id)}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+              className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
             >
               Delete
             </button>

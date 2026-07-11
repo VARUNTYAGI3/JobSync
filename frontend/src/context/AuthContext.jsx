@@ -51,13 +51,6 @@ function AuthProvider({ children }) {
 
     setUser(null);
   }
-  async function login(credentials) {
-    console.log("Credentials:", credentials);
-
-    const data = await authService.login(credentials);
-
-    // ...
-  }
 
   return (
     <AuthContext.Provider

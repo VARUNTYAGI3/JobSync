@@ -35,3 +35,12 @@ export const updateJob = async (id, jobData) => {
 export const deleteJob = async (id) => {
   await api.delete(`/jobs/${id}`);
 };
+
+export const fetchRecruiterJobs = async () => {
+  const response = await api.get("/jobs/my-jobs");
+
+  return response.data.map((job) => ({
+    ...job,
+    id: job._id,
+  }));
+};

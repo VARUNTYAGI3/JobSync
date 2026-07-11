@@ -24,6 +24,7 @@ const JobList = ({ jobs, deleteJob, editJob }) => {
               skills={job.skills}
               createdAt={job.createdAt}
               verified={job.verified}
+              applicationStatus={job.applicationStatus}
               deleteJob={deleteJob}
               editJob={editJob}
             />

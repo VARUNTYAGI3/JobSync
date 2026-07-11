@@ -2,6 +2,8 @@ import React, { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import RoleRoute from "../components/common/RoleRoute";
+import Applicants from "../pages/Applicants";
+import MyApplications from "../pages/MyApplications";
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const JobDetails = lazy(() => import("../pages/JobDetails"));
@@ -40,6 +42,8 @@ const AppRoutes = () => {
           </RoleRoute>
         }
       />
+      <Route path="/recruiter/jobs/:jobId" element={<Applicants />} />
+      <Route path="/applications" element={<MyApplications />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
