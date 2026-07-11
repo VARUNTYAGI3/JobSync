@@ -12,11 +12,20 @@ import {
 } from "../services/applicationService";
 const Applicants = () => {
   const { jobId } = useParams();
-  const { applicants } = useApplicants(jobId);
+  const { applicants, setApplicants } = useApplicants(jobId);
   async function handleAccept(id) {
     try {
       await acceptApplication(id);
-      window.location.reload();
+
+      setApplicants((prev) =>
+        prev.map((application) =>
+          application._id === id
+            ? { ...application, status: "Accepted" }
+            : application,
+        ),
+      );
+
+      toast.success("Application accepted.");
     } catch {
       toast.error("Unable to accept this application right now.");
     }
@@ -25,7 +34,16 @@ const Applicants = () => {
   async function handleReject(id) {
     try {
       await rejectApplication(id);
-      window.location.reload();
+
+      setApplicants((prev) =>
+        prev.map((application) =>
+          application._id === id
+            ? { ...application, status: "Rejected" }
+            : application,
+        ),
+      );
+
+      toast.success("Application rejected.");
     } catch {
       toast.error("Unable to reject this application right now.");
     }
