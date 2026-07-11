@@ -15,9 +15,8 @@ class ErrorBoundary extends React.Component {
     };
   }
 
-  componentDidCatch(error, errorInfo) {
-    console.error("Error:", error);
-    console.error("Error Info:", errorInfo);
+  componentDidCatch() {
+    // Keep the fallback UI simple without noisy console output.
   }
 
   render() {

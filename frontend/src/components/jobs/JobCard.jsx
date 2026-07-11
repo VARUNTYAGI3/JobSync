@@ -1,4 +1,5 @@
 import { memo } from "react";
+import toast from "react-hot-toast";
 import {
   BuildingOffice2Icon,
   MapPinIcon,
@@ -13,7 +14,6 @@ import { formatPostedDate } from "../../utils/formatPostedDate";
 import { formatSalary } from "../../utils/formatSalary";
 import { applyJob } from "../../services/applicationService";
 import { saveJob } from "../../services/savedJobService";
-import { useState } from "react";
 function JobCard({
   id,
   title,
@@ -38,37 +38,29 @@ function JobCard({
       .join("")
       .toUpperCase() || "J";
   const { user } = useAuth();
-  const [applied, setApplied] = useState(false);
-  const [saved, setSaved] = useState(false);
   const skillList = Array.isArray(skills) ? skills : [skills].filter(Boolean);
   async function handleApply() {
     try {
       await applyJob(id);
-
-      setApplied(true);
-
-      alert("Application submitted successfully!");
+      toast.success("Application submitted successfully!");
     } catch (error) {
-      alert(error.response?.data?.message || "Application failed");
+      toast.error(error.response?.data?.message || "Unable to submit your application.");
     }
   }
 
   async function handleSave() {
     try {
       await saveJob(id);
-
-      setSaved(true);
-
-      alert("Job saved successfully!");
+      toast.success("Job saved successfully!");
     } catch (error) {
-      alert(error.response?.data?.message || "Unable to save job.");
+      toast.error(error.response?.data?.message || "Unable to save this job.");
     }
   }
   return (
-    <article className="group h-full rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_-20px_rgba(37,99,235,0.24)]">
+    <article className="group h-full rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_-20px_rgba(37,99,235,0.24)]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-sm font-semibold text-white shadow-lg shadow-blue-600/20">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-blue-500 text-sm font-semibold text-white shadow-lg shadow-blue-600/20">
             {initials}
           </div>
           <div>

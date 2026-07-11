@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BriefcaseIcon,
   BuildingOffice2Icon,

@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import useApplicants from "../hooks/useApplicants";
 import {
   UserCircleIcon,
@@ -15,20 +16,18 @@ const Applicants = () => {
   async function handleAccept(id) {
     try {
       await acceptApplication(id);
-
       window.location.reload();
-    } catch (error) {
-      alert("Failed");
+    } catch {
+      toast.error("Unable to accept this application right now.");
     }
   }
 
   async function handleReject(id) {
     try {
       await rejectApplication(id);
-
       window.location.reload();
-    } catch (error) {
-      alert("Failed");
+    } catch {
+      toast.error("Unable to reject this application right now.");
     }
   }
   return (

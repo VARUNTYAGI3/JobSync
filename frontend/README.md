@@ -1,16 +1,67 @@
-# React + Vite
+# JobSync
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+JobSync is a full-stack job portal built with React, Node.js, Express, MongoDB, and JWT authentication.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Student and recruiter dashboards
+- Job browsing and application flow
+- Saved jobs
+- AI Career Assistant with:
+  - Interview question generation
+  - Cover letter generation
+  - Resume matching
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Install dependencies
 
-## Expanding the ESLint configuration
+```bash
+npm install
+cd backend && npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2. Configure environment variables
+
+Create a `.env` file in the backend folder and add:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+GEMINI_API_KEY=your_google_gemini_api_key
+```
+
+### 3. Run the app
+
+Start the backend:
+
+```bash
+cd backend
+node server.js
+```
+
+Start the frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+### 4. Use the AI features
+
+After logging in, open:
+
+```text
+/ai
+```
+
+You can use the three tabs for:
+- Interview Questions
+- Cover Letter
+- Resume Match
+
+## Notes
+
+- The AI routes are protected with the existing JWT authentication.
+- The Gemini API key is used only on the backend and is never exposed to the frontend.

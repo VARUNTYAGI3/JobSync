@@ -1,5 +1,3 @@
-import React from "react";
-import Loading from "./components/common/Loading";
 import AppRoutes from "./routes/AppRoutes";
 import Navbar from "./components/layout/Navbar";
 import ErrorBoundary from "./components/common/ErrorBoundary";

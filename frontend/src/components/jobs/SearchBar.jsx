@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import AIBadge from "../common/AIBadge";
 
 function SearchBar({ search, setSearch, resultCount }) {

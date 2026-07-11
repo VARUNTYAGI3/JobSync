@@ -9,7 +9,9 @@ const {
   deleteJob,
   getRecruiterJobs,
 } = require("../controllers/jobController");
-router.get("/",protect, getJobs);
+const optionalAuth = require("../middleware/optionalAuth");
+
+router.get("/", optionalAuth, getJobs);
 
 router.get("/my-jobs", protect, getRecruiterJobs);
 

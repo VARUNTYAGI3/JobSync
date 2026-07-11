@@ -9,8 +9,8 @@ const useRecruiterJobs = () => {
       try {
         const data = await fetchRecruiterJobs();
         setJobs(data);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        setJobs([]);
       }
     }
 

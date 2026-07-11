@@ -9,8 +9,8 @@ const useApplications = () => {
       try {
         const data = await getMyApplications();
         setApplications(data);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        setApplications([]);
       }
     }
 

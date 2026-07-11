@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import RoleRoute from "../components/common/RoleRoute";
@@ -6,11 +6,11 @@ import Applicants from "../pages/Applicants";
 import MyApplications from "../pages/MyApplications";
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
-const JobDetails = lazy(() => import("../pages/JobDetails"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
 const StudentDashboard = lazy(() => import("../pages/StudentDashboard"));
 const RecruiterDashboard = lazy(() => import("../pages/RecruiterDashboard"));
+const AICareerAssistant = lazy(() => import("../pages/AICareerAssistant"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const AppRoutes = () => {
   return (
@@ -44,6 +44,14 @@ const AppRoutes = () => {
       />
       <Route path="/recruiter/jobs/:jobId" element={<Applicants />} />
       <Route path="/applications" element={<MyApplications />} />
+      <Route
+        path="/ai"
+        element={
+          <ProtectedRoute>
+            <AICareerAssistant />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { jobId } = useParams();
-const { applicants } = useApplicants(jobId);
 const applicationSchema = new mongoose.Schema(
   {
     student: {

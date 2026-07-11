@@ -44,3 +44,15 @@ export const fetchRecruiterJobs = async () => {
     id: job._id,
   }));
 };
+
+export const fetchRecruiterDashboardStats = async () => {
+  const response = await api.get("/api/dashboard/recruiter");
+
+  return response.data;
+};
+
+export const fetchStudentDashboardStats = async () => {
+  const response = await api.get("/api/dashboard/student");
+
+  return response.data;
+};

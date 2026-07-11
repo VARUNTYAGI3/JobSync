@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import AddJobForm from "../components/jobs/AddJobForm";
-import { createJob } from "../services/jobService";
+import { createJob, fetchRecruiterDashboardStats } from "../services/jobService";
 import {
   BriefcaseIcon,
   ChartBarIcon,
@@ -22,6 +23,13 @@ const RecruiterDashboard = () => {
   const [type, setType] = useState("Full-Time");
   const [skills, setSkills] = useState("");
   const [description, setDescription] = useState("");
+  const [dashboardStats, setDashboardStats] = useState({
+    jobs: 0,
+    applications: 0,
+    pending: 0,
+    accepted: 0,
+  });
+  const [loadingStats, setLoadingStats] = useState(true);
   const { user } = useAuth();
   const { jobs } = useRecruiterJobs();
   async function saveJob() {
@@ -41,41 +49,70 @@ const RecruiterDashboard = () => {
         description,
       });
 
-      alert("Job Posted Successfully!");
-
+      toast.success("Job posted successfully.");
       setTitle("");
       setCompany("");
       setLocation("");
       setSalary("");
       setSkills("");
       setDescription("");
-    } catch (error) {
-      console.log(error);
+    } catch {
+      toast.error("Unable to post this job right now.");
     }
   }
 
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await fetchRecruiterDashboardStats();
+        setDashboardStats({
+          jobs: data.jobs || 0,
+          applications: data.applications || 0,
+          pending: data.pending || 0,
+          accepted: data.accepted || 0,
+        });
+      } catch {
+        setDashboardStats({
+          jobs: 0,
+          applications: 0,
+          pending: 0,
+          accepted: 0,
+        });
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
   const stats = [
     {
-      label: "Total Jobs",
-      value: jobs.length,
+      label: "Jobs Posted",
+      value: loadingStats ? "..." : dashboardStats.jobs,
       icon: BriefcaseIcon,
     },
     {
-      label: "Applications",
-      value: "0",
+      label: "Total Applications",
+      value: loadingStats ? "..." : dashboardStats.applications,
       icon: UsersIcon,
     },
     {
-      label: "Pending",
-      value: "0",
+      label: "Pending Applications",
+      value: loadingStats ? "..." : dashboardStats.pending,
+      icon: ChartBarIcon,
+    },
+    {
+      label: "Accepted Applications",
+      value: loadingStats ? "..." : dashboardStats.accepted,
       icon: ChartBarIcon,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#f8fafc_100%)] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.25)] sm:p-8">
+        <div className="rounded-4xl border border-slate-200 bg-white p-6 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.25)] sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 text-sm font-semibold text-purple-700">
@@ -90,19 +127,19 @@ const RecruiterDashboard = () => {
                 into your pipeline and latest activity.
               </p>
             </div>
-            <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600 shadow-sm">
               4 new applicants today
             </div>
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((item) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.label}
-                className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm"
+                className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
               >
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                   <Icon className="h-6 w-6" />

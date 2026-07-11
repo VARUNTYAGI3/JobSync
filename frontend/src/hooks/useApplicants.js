@@ -9,8 +9,8 @@ const useApplicants = (jobId) => {
       try {
         const data = await getApplicants(jobId);
         setApplicants(data);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        setApplicants([]);
       }
     }
 

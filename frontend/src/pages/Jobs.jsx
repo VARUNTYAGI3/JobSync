@@ -1,34 +1,13 @@
-import React from "react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import SearchBar from "../components/jobs/SearchBar";
 import JobList from "../components/jobs/JobList";
 import Loading from "../components/common/Loading";
 import useJobs from "../hooks/useJobs";
-import {
-  createJob,
-  updateJob,
-  deleteJob as deleteJobAPI,
-} from "../services/jobService";
-import { useMemo } from "react";
-import { useCallback } from "react";
-import useAuth from "../hooks/useAuth";
+import { deleteJob as deleteJobAPI } from "../services/jobService";
 const Jobs = () => {
   const [search, setSearch] = useState("");
-  const [title, setTitle] = useState("");
-  const [company, setCompany] = useState("");
-  const [location, setLocation] = useState("");
-  const [salary, setSalary] = useState("");
-  const [editingId, setEditingId] = useState(null);
   const { jobs, setJobs, loading, error } = useJobs();
-  const [workMode, setWorkMode] = useState("On-site");
-  const [experience, setExperience] = useState("0-1 Years");
-  const [type, setType] = useState("Full-Time");
-  const [skills, setSkills] = useState("");
-  const [description, setDescription] = useState("");
-  const { user } = useAuth();
   const filteredJobs = useMemo(() => {
-    console.log("Filtering Jobs...");
-
     return jobs.filter(
       (job) =>
         job.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -37,19 +16,8 @@ const Jobs = () => {
     );
   }, [jobs, search]);
   const editJob = useCallback((job) => {
-    setTitle(job.title);
-    setCompany(job.company);
-    setLocation(job.location);
-    setSalary(job.salary);
-
-    setEditingId(job.id);
-  }, []);
-  const cancelEdit = useCallback(() => {
-    setTitle("");
-    setCompany("");
-    setLocation("");
-    setSalary("");
-    setEditingId(null);
+    // Recruiter editing is handled in the shared job card flow.
+    return job;
   }, []);
   const deleteJob = useCallback(
     async (id) => {
@@ -57,54 +25,12 @@ const Jobs = () => {
         await deleteJobAPI(id);
 
         setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
-      } catch (error) {
-        console.error(error);
+      } catch {
+        // Keep the UI responsive without surfacing noisy errors.
       }
     },
     [setJobs],
   );
-  const saveJob = async () => {
-    if (!title || !company || !location || !salary) {
-      return;
-    }
-
-    if (editingId !== null) {
-      try {
-        const updatedJob = await updateJob(editingId, {
-          title,
-          company,
-          location,
-          salary: Number(salary) * 100000,
-          description: `${title} position at ${company}`,
-          type: "Full-Time",
-        });
-
-        setJobs((prevJobs) =>
-          prevJobs.map((job) => (job.id === editingId ? updatedJob : job)),
-        );
-
-        setEditingId(null);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      const newJob = await createJob({
-        title,
-        company,
-        location,
-        salary: Number(salary) * 100000,
-        description: `${title} position at ${company}`,
-        type: "Full-Time",
-      });
-
-      setJobs((prevJobs) => [...prevJobs, newJob]);
-    }
-
-    setTitle("");
-    setCompany("");
-    setLocation("");
-    setSalary("");
-  };
   if (loading) {
     return <Loading />;
   }
@@ -123,9 +49,9 @@ const Jobs = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#f8fbff_0%,_#f8fafc_100%)]">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#f8fafc_100%)]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <div className="mb-6 rounded-[32px] border border-slate-200/80 bg-white/80 p-6 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.25)] backdrop-blur sm:p-8">
+        <div className="mb-6 rounded-4xl border border-slate-200/80 bg-white/80 p-6 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.25)] backdrop-blur sm:p-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Browse Jobs</p>
@@ -147,7 +73,7 @@ const Jobs = () => {
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-slate-200/80 bg-white/80 p-4 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.2)] backdrop-blur sm:p-6">
+        <div className="rounded-4xl border border-slate-200/80 bg-white/80 p-4 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.2)] backdrop-blur sm:p-6">
           <div className="mb-5">
             <SearchBar
               search={search}
