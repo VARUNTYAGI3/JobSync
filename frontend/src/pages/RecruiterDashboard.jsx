@@ -216,7 +216,7 @@ const RecruiterDashboard = () => {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            {/* <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-slate-900">
                   Recent Applicants
@@ -243,9 +243,9 @@ const RecruiterDashboard = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
 
-            <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            {/* <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-slate-900">
                   Recent Activity
@@ -277,7 +277,7 @@ const RecruiterDashboard = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
