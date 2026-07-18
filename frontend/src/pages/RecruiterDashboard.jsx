@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import AddJobForm from "../components/jobs/AddJobForm";
-import { createJob, fetchRecruiterDashboardStats } from "../services/jobService";
+import {
+  createJob,
+  updateJob,
+  fetchRecruiterDashboardStats,
+} from "../services/jobService";
 import {
   BriefcaseIcon,
   ChartBarIcon,
@@ -17,12 +21,12 @@ const RecruiterDashboard = () => {
   const [company, setCompany] = useState("");
   const [location, setLocation] = useState("");
   const [salary, setSalary] = useState("");
-
   const [workMode, setWorkMode] = useState("On-site");
   const [experience, setExperience] = useState("0-1 Years");
   const [type, setType] = useState("Full-Time");
   const [skills, setSkills] = useState("");
   const [description, setDescription] = useState("");
+  const [editingId, setEditingId] = useState(null);
   const [dashboardStats, setDashboardStats] = useState({
     jobs: 0,
     applications: 0,
@@ -31,10 +35,10 @@ const RecruiterDashboard = () => {
   });
   const [loadingStats, setLoadingStats] = useState(true);
   const { user } = useAuth();
-  const { jobs } = useRecruiterJobs();
+  const { jobs, setJobs } = useRecruiterJobs();
   async function saveJob() {
     try {
-      await createJob({
+      const jobData = {
         title,
         company,
         location,
@@ -47,20 +51,71 @@ const RecruiterDashboard = () => {
           .map((skill) => skill.trim())
           .filter(Boolean),
         description,
-      });
+      };
 
-      toast.success("Job posted successfully.");
+      if (editingId) {
+        const updatedJob = await updateJob(editingId, jobData);
+
+        setJobs((prevJobs) =>
+          prevJobs.map((job) => (job.id === editingId ? updatedJob : job)),
+        );
+        toast.success("Job updated successfully.");
+      } else {
+        const newJob = await createJob(jobData);
+
+        setJobs((prevJobs) => [newJob, ...prevJobs]);
+
+        toast.success("Job posted successfully.");
+      }
+
+      setEditingId(null);
+
       setTitle("");
       setCompany("");
       setLocation("");
       setSalary("");
+
+      setWorkMode("On-site");
+      setExperience("0-1 Years");
+      setType("Full-Time");
+
       setSkills("");
       setDescription("");
     } catch {
-      toast.error("Unable to post this job right now.");
+      toast.error("Unable to save job.");
     }
   }
+  const editJob = (job) => {
+    setEditingId(job.id);
 
+    setTitle(job.title);
+    setCompany(job.company);
+    setLocation(job.location);
+    setSalary(job.salary);
+
+    setWorkMode(job.workMode);
+    setExperience(job.experience);
+    setType(job.type);
+    setSkills(
+      Array.isArray(job.skills) ? job.skills.join(", ") : job.skills || "",
+    );
+    setDescription(job.description);
+  };
+  const cancelEdit = () => {
+    setEditingId(null);
+
+    setTitle("");
+    setCompany("");
+    setLocation("");
+    setSalary("");
+
+    setWorkMode("On-site");
+    setExperience("0-1 Years");
+    setType("Full-Time");
+
+    setSkills("");
+    setDescription("");
+  };
   useEffect(() => {
     const loadStats = async () => {
       try {
@@ -128,7 +183,9 @@ const RecruiterDashboard = () => {
               </p>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600 shadow-sm">
-              4 new applicants today
+              {loadingStats
+                ? "Loading..."
+                : `${dashboardStats.pending} pending applications`}
             </div>
           </div>
         </div>
@@ -175,7 +232,8 @@ const RecruiterDashboard = () => {
               description={description}
               setDescription={setDescription}
               saveJob={saveJob}
-              editingId={null}
+              editingId={editingId}
+              cancelEdit={cancelEdit}
             />
           </aside>
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
@@ -204,12 +262,21 @@ const RecruiterDashboard = () => {
                       <p className="text-sm text-slate-500">{job.company}</p>
                     </div>
 
-                    <Link
-                      to={`/recruiter/jobs/${job._id}`}
-                      className="text-blue-600 font-semibold"
-                    >
-                      View Applicants
-                    </Link>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => editJob(job)}
+                        className="font-semibold text-amber-600 hover:text-amber-700"
+                      >
+                        Edit
+                      </button>
+
+                      <Link
+                        to={`/recruiter/jobs/${job._id}`}
+                        className="font-semibold text-blue-600"
+                      >
+                        View Applicants
+                      </Link>
+                    </div>
                   </div>
                 ))
               )}
