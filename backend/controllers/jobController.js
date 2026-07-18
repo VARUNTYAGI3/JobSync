@@ -1,7 +1,6 @@
-import Application from "../models/Application.js";
-import SavedJob from "../models/SavedJob.js";
 const Job = require("../models/Job");
 const asyncHandler = require("../utils/asyncHandler");
+const SavedJob = require("../models/SavedJob");
 // GET /jobs
 const Application = require("../models/Application");
 
