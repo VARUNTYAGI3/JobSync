@@ -1,3 +1,5 @@
+import Application from "../models/Application.js";
+import SavedJob from "../models/SavedJob.js";
 const Job = require("../models/Job");
 const asyncHandler = require("../utils/asyncHandler");
 // GET /jobs
@@ -87,8 +89,16 @@ const deleteJob = asyncHandler(async (req, res) => {
     throw new Error("Not authorized to delete this job");
   }
 
-  await job.deleteOne();
+  const jobId = job._id;
 
+  // Delete all applications of this job
+  await Application.deleteMany({ job: jobId });
+
+  // Delete all saved-job entries of this job
+  await SavedJob.deleteMany({ job: jobId });
+
+  // Delete the job itself
+  await job.deleteOne();
   res.status(200).json({
     message: "Job deleted successfully",
   });

@@ -68,7 +68,11 @@ const getMyApplications = asyncHandler(async (req, res) => {
     student: req.user._id,
   }).populate("job");
 
-  res.status(200).json(applications);
+  const validApplications = applications.filter(
+    (application) => application.job
+  );
+
+  res.json(validApplications);
 });
 
 // Recruiter views applicants for one job

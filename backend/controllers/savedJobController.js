@@ -25,16 +25,23 @@ const saveJob = asyncHandler(async (req, res) => {
 
 // Get Saved Jobs
 const getSavedJobs = asyncHandler(async (req, res) => {
-  const jobs = await SavedJob.find({
+  const savedJobs = await SavedJob.find({
     student: req.user._id,
   }).populate("job");
 
-  res.status(200).json(jobs);
+  const validSavedJobs = savedJobs.filter(
+    (savedJob) => savedJob.job
+  );
+
+  res.json(validSavedJobs);
 });
 
 // Remove Saved Job
 const removeSavedJob = asyncHandler(async (req, res) => {
-  await SavedJob.findByIdAndDelete(req.params.id);
+  await SavedJob.findOneAndDelete({
+    _id: req.params.id,
+    student: req.user._id,
+  });
 
   res.json({
     message: "Job removed",

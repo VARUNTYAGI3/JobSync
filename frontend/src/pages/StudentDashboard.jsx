@@ -157,7 +157,8 @@ const StudentDashboard = () => {
                     {progressValue}%
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    {acceptedApplications} accepted of {totalApplications} applications
+                    {acceptedApplications} accepted of {totalApplications}{" "}
+                    applications
                   </p>
                 </>
               ) : (
@@ -226,7 +227,9 @@ const StudentDashboard = () => {
                     Preparing fresh opportunities...
                   </div>
                 ) : latestJobs.length === 0 ? (
-                  <p className="text-slate-500">No opportunities available yet.</p>
+                  <p className="text-slate-500">
+                    No opportunities available yet.
+                  </p>
                 ) : (
                   latestJobs.map((job) => (
                     <Link
@@ -279,17 +282,19 @@ const StudentDashboard = () => {
                     <p className="mt-3 text-slate-500">No saved jobs yet.</p>
                   </div>
                 ) : (
-                  savedJobs.map((item) => (
-                    <div
-                      key={item._id}
-                      className="rounded-2xl border bg-slate-50 p-4"
-                    >
-                      <h3 className="font-semibold">{item.job?.title}</h3>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {item.job?.company}
-                      </p>
-                    </div>
-                  ))
+                  savedJobs
+                    .filter((savedJob) => savedJob.job)
+                    .map((item) => (
+                      <div
+                        key={item._id}
+                        className="rounded-2xl border bg-slate-50 p-4"
+                      >
+                        <h3 className="font-semibold">{item.job?.title}</h3>
+                        <p className="mt-1 text-sm text-slate-500">
+                          {item.job?.company}
+                        </p>
+                      </div>
+                    ))
                 )}
               </div>
             </div>
@@ -339,7 +344,10 @@ const StudentDashboard = () => {
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-semibold">My Applications</h2>
 
-                <Link to="/applications" className="text-blue-600 font-semibold">
+                <Link
+                  to="/applications"
+                  className="text-blue-600 font-semibold"
+                >
                   View All
                 </Link>
               </div>
@@ -377,8 +385,8 @@ const StudentDashboard = () => {
                             application.status === "Accepted"
                               ? "bg-green-100 text-green-700"
                               : application.status === "Rejected"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-yellow-100 text-yellow-700"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-yellow-100 text-yellow-700"
                           }`}
                         >
                           {application.status}
